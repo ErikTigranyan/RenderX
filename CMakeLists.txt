@@ -9,3 +9,4 @@ endif()
 
 add_subdirectory(RenderX)
 add_subdirectory(Dependencies/glfw)
+add_subdirectory(Dependencies/glm)
