@@ -6,6 +6,9 @@ if (NOT DEFINED VULKAN_SDK_PATH)
 endif()
 
 file(GLOB SOURCES "src/*.cpp" "src/*.h")
+file(GLOB SHADERS "shaders/*.vert" "shaders/*.frag" "shaders/*.glsl")
+
+source_group("Shaders" FILES ${SHADERS})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/Dependencies/glfw/include)
@@ -13,6 +16,9 @@ include_directories(${VULKAN_SDK_PATH}/Include)
 include_directories(${CMAKE_SOURCE_DIR}/Dependencies/glm/include)
 
 link_directories(${VULKAN_SDK_PATH}/Lib)
+
+add_custom_target(Shaders SOURCES ${SHADERS})
+set_target_properties(Shaders PROPERTIES FOLDER "shaders")
 
 add_executable(RenderX ${SOURCES})
 

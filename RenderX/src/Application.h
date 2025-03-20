@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Window.h"
+#include "Pipeline.h"
 
 namespace rex {
 	class Application {
@@ -11,6 +12,7 @@ namespace rex {
 		void run();
 
 	private:
-		Window window = Window(WIDTH, HEIGHT, "Hello aper!");
+		Window window = Window(WIDTH, HEIGHT, "Hello Vulkan!");
+		Pipeline Pipeline{"../shaders/simple_shader.vert.spv", "../shaders/simple_shader.frag.spv"};
 	};
 }
