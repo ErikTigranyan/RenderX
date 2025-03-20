@@ -2,6 +2,7 @@
 
 #include "Window.h"
 #include "Pipeline.h"
+#include "Device.h"
 
 namespace rex {
 	class Application {
@@ -12,7 +13,9 @@ namespace rex {
 		void run();
 
 	private:
-		Window window = Window(WIDTH, HEIGHT, "Hello Vulkan!");
-		Pipeline Pipeline{"../shaders/simple_shader.vert.spv", "../shaders/simple_shader.frag.spv"};
+		Window window {WIDTH, HEIGHT, "Hello Vulkan!"};
+		Device device {window};
+
+		Pipeline Pipeline{device, "../../RenderX/shaders/simple_shader.vert.spv", "../../RenderX/shaders/simple_shader.frag.spv", Pipeline::defaultPipelineConfigInfo(WIDTH, HEIGHT)};
 	};
 }
