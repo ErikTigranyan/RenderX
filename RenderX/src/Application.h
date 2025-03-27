@@ -3,6 +3,11 @@
 #include "Window.h"
 #include "Pipeline.h"
 #include "Device.h"
+#include "SwapChain.h"
+
+//std
+#include <memory>
+#include <vector>
 
 namespace rex {
 	class Application {
@@ -10,12 +15,25 @@ namespace rex {
 		static constexpr int WIDTH = 800;
 		static constexpr int HEIGHT = 600;
 
+		Application();
+		~Application();
+
+		Application(const Application&) = delete;
+		Application& operator = (const Application&) = delete;
+
 		void run();
 
 	private:
+		void createPipelineLayout();
+		void createPipeline();
+		void createCommandBuffers();
+		void drawFrame();
+
 		Window window {WIDTH, HEIGHT, "Hello Vulkan!"};
 		Device device {window};
-
-		Pipeline Pipeline{device, "../../RenderX/shaders/simple_shader.vert.spv", "../../RenderX/shaders/simple_shader.frag.spv", Pipeline::defaultPipelineConfigInfo(WIDTH, HEIGHT)};
+		SwapChain swapChain {device, window.getExtent()};
+		std::unique_ptr<Pipeline> pipeline;
+		VkPipelineLayout pipelineLayout;
+		std::vector <VkCommandBuffer> commandBuffers;
 	};
 }
