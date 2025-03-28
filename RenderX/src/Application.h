@@ -19,7 +19,7 @@ namespace rex {
 		~Application();
 
 		Application(const Application&) = delete;
-		Application& operator = (const Application&) = delete;
+		Application &operator = (const Application&) = delete;
 
 		void run();
 

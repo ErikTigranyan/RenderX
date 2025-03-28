@@ -8,8 +8,12 @@
 
 namespace rex {
 	struct PipelineConfigInfo {
+		PipelineConfigInfo(const PipelineConfigInfo&) = delete;
+		PipelineConfigInfo & operator=(const PipelineConfigInfo&) = delete;
+
 		VkViewport viewport;
 		VkRect2D scissor;
+		VkPipelineViewportStateCreateInfo viewportInfo;
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
 		VkPipelineRasterizationStateCreateInfo rasterizationInfo;
 		VkPipelineMultisampleStateCreateInfo multisampleInfo;
@@ -28,8 +32,9 @@ namespace rex {
 		Pipeline(const Pipeline&) = delete;
 		void operator=(const Pipeline&) = delete;
 
-		static PipelineConfigInfo defaultPipelineConfigInfo(uint32_t width, uint32_t height);
+		void bind(VkCommandBuffer commandBuffer);
 
+		static void defaultPipelineConfigInfo(PipelineConfigInfo& configInfo, uint32_t width, uint32_t height);
 	private:
 		static std::vector<char> readFile(const std::string& filepath);
 
@@ -42,4 +47,4 @@ namespace rex {
 		VkShaderModule vertShaderModule;
 		VkShaderModule fragShaderModule;
 	};
-}// namespace rex
+} // namespace rex
