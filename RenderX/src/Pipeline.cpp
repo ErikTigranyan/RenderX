@@ -87,7 +87,7 @@ namespace rex {
 		pipelineInfo.renderPass = configInfo.renderPass;
 		pipelineInfo.subpass = configInfo.subpass;
 
-		pipelineInfo.basePipelineIndex = 1;
+		pipelineInfo.basePipelineIndex = -1;
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
 		if (vkCreateGraphicsPipelines(device.device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
