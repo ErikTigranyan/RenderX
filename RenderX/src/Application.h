@@ -4,6 +4,7 @@
 #include "Pipeline.h"
 #include "Device.h"
 #include "SwapChain.h"
+#include "Model.h"
 
 //std
 #include <memory>
@@ -24,6 +25,7 @@ namespace rex {
 		void run();
 
 	private:
+		void loadModels();
 		void createPipelineLayout();
 		void createPipeline();
 		void createCommandBuffers();
@@ -35,5 +37,6 @@ namespace rex {
 		std::unique_ptr<Pipeline> pipeline;
 		VkPipelineLayout pipelineLayout;
 		std::vector <VkCommandBuffer> commandBuffers;
+		std::unique_ptr<Model> model;
 	};
 }
