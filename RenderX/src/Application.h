@@ -4,7 +4,7 @@
 #include "Pipeline.h"
 #include "Device.h"
 #include "SwapChain.h"
-#include "Model.h"
+#include "GameObject.h"
 
 //std
 #include <memory>
@@ -25,7 +25,7 @@ namespace rex {
 		void run();
 
 	private:
-		void loadModels();
+		void loadGameObjects();
 		void createPipelineLayout();
 		void createPipeline();
 		void createCommandBuffers();
@@ -33,6 +33,7 @@ namespace rex {
 		void drawFrame();
 		void recreateSwapChain();
 		void recordCommandBuffer(int imageIndex);
+		void renderGameObjects(VkCommandBuffer commandBuffer);
 
 		Window window {WIDTH, HEIGHT, "Hello Vulkan!"};
 		Device device {window};
@@ -40,6 +41,6 @@ namespace rex {
 		std::unique_ptr<Pipeline> pipeline;
 		VkPipelineLayout pipelineLayout;
 		std::vector <VkCommandBuffer> commandBuffers;
-		std::unique_ptr<Model> model;
+		std::vector<GameObject> gameObjects;
 	};
 }
