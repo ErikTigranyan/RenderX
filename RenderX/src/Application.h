@@ -1,9 +1,8 @@
 #pragma once
 
 #include "Window.h"
-#include "Pipeline.h"
 #include "Device.h"
-#include "SwapChain.h"
+#include "Renderer.h"
 #include "GameObject.h"
 
 //std
@@ -26,21 +25,11 @@ namespace rex {
 
 	private:
 		void loadGameObjects();
-		void createPipelineLayout();
-		void createPipeline();
-		void createCommandBuffers();
-		void freeCommandBuffers();
-		void drawFrame();
-		void recreateSwapChain();
-		void recordCommandBuffer(int imageIndex);
-		void renderGameObjects(VkCommandBuffer commandBuffer);
 
 		Window window {WIDTH, HEIGHT, "Hello Vulkan!"};
 		Device device {window};
-		std::unique_ptr<SwapChain> swapChain; // gets updated width and height
-		std::unique_ptr<Pipeline> pipeline;
-		VkPipelineLayout pipelineLayout;
-		std::vector <VkCommandBuffer> commandBuffers;
+		Renderer renderer{ window, device };
+
 		std::vector<GameObject> gameObjects;
 	};
-}
+} // namespace rex
