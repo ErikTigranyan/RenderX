@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 project(RenderX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
 if (NOT DEFINED VULKAN_SDK_PATH)
     message(FATAL_ERROR "VULKAN_SDK_PATH is not defined. Make sure the parent CMakeLists.txt is correctly setting this variable.")
 endif()
