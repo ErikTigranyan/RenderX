@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Camera.h"
+#include "GameObject.h"
 
 // lib
 #include <vulkan/vulkan.h>
@@ -12,5 +13,6 @@ namespace rex {
 		VkCommandBuffer commandBuffer;
 		Camera &camera;
 		VkDescriptorSet globalDescriptorSet;
+		GameObject::Map &gameObjects;
 	};
 } // namespace rex

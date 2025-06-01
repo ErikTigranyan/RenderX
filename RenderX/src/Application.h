@@ -33,6 +33,6 @@ namespace rex {
 
 		// order of declarations matters
 		std::unique_ptr<DescriptorPool> globalPool{}; // any descriptors that should be shared by multiple systems can use this object 
-		std::vector<GameObject> gameObjects;
+		GameObject::Map gameObjects;
 	};
 } // namespace rex
