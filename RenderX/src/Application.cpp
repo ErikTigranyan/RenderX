@@ -2,6 +2,7 @@
 #include "SimpleRenderSystem.h"
 #include "Camera.h"
 #include "KeyboardMovementController.h"
+#include "Buffer.h"
 
 // libs
 #define	GLM_FORCE_RADIANS
@@ -14,14 +15,35 @@
 #include <stdexcept>
 #include <cassert>
 #include <array>
+#include <numeric>
 
 namespace rex {
+	// this struct is the same as the simple push constant data
+	struct GlobalUbo {
+		glm::mat4 projectionView{1.f};
+		glm::vec3 lightDirection = glm::normalize(glm::vec3{ 1.f, -3.f, -1.f });
+	};
 
 	Application::Application() { loadGameObjects(); }
 
 	Application::~Application() {}
 
 	void Application::run() {
+		// find lowest common multiple 
+		auto minOffsetAlignment = std::lcm(
+			device.properties.limits.minUniformBufferOffsetAlignment,
+			device.properties.limits.nonCoherentAtomSize
+		);
+		std::vector<std::unique_ptr<Buffer>> uboBuffers(SwapChain::MAX_FRAMES_IN_FLIGHT);
+			for (int i = 0; i < uboBuffers.size(); i++) {
+				uboBuffers[i] = std::make_unique<Buffer>(
+					device,
+					sizeof(GlobalUbo),
+					1,
+					VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+					VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+				uboBuffers[i]->map();
+			}
 		SimpleRenderSystem simpleRenderSystem{ device, renderer.getSwapChainRenderPass() };
         Camera camera{};
 
@@ -41,11 +63,25 @@ namespace rex {
             camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
 
             float aspect = renderer.getAspectRatio();
-            // camera.setOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
             camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 10.f);
 			if (auto commandBuffer = renderer.beginFrame()) {
+				int frameIndex = renderer.getFrameIndex();
+				FrameInfo frameInfo{
+					frameIndex,
+					frameTime,
+					commandBuffer,
+					camera
+				};
+				// UPDATE
+				// here we will prepare and update objects and memory
+				GlobalUbo ubo{};
+				ubo.projectionView = camera.getProjection() * camera.getView();
+				uboBuffers[frameIndex]->writeToBuffer(&ubo); 
+				uboBuffers[frameIndex]->flush();
+				// RENDER
+				// here the draw calls will be recorded
 				renderer.beginSwapChainRenderPass(commandBuffer);
-				simpleRenderSystem.renderGameObjects(commandBuffer, gameObjects, camera);
+				simpleRenderSystem.renderGameObjects(frameInfo, gameObjects);
 				renderer.endSwapChainRenderPass(commandBuffer);
 				renderer.endFrame();
 			}
