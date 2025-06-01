@@ -4,6 +4,7 @@
 #include "Device.h"
 #include "Renderer.h"
 #include "GameObject.h"
+#include "Descriptors.h"
 
 //std
 #include <memory>
@@ -30,6 +31,8 @@ namespace rex {
 		Device device {window};
 		Renderer renderer{ window, device };
 
+		// order of declarations matters
+		std::unique_ptr<DescriptorPool> globalPool{}; // any descriptors that should be shared by multiple systems can use this object 
 		std::vector<GameObject> gameObjects;
 	};
 } // namespace rex

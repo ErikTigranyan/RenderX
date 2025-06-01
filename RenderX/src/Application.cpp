@@ -24,7 +24,13 @@ namespace rex {
 		glm::vec3 lightDirection = glm::normalize(glm::vec3{ 1.f, -3.f, -1.f });
 	};
 
-	Application::Application() { loadGameObjects(); }
+	Application::Application() { 
+		globalPool = DescriptorPool::Builder(device)
+			.setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
+			.addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
+			.build();
+		loadGameObjects();
+	}
 
 	Application::~Application() {}
 
@@ -35,16 +41,33 @@ namespace rex {
 			device.properties.limits.nonCoherentAtomSize
 		);
 		std::vector<std::unique_ptr<Buffer>> uboBuffers(SwapChain::MAX_FRAMES_IN_FLIGHT);
-			for (int i = 0; i < uboBuffers.size(); i++) {
-				uboBuffers[i] = std::make_unique<Buffer>(
-					device,
-					sizeof(GlobalUbo),
-					1,
-					VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-					VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-				uboBuffers[i]->map();
-			}
-		SimpleRenderSystem simpleRenderSystem{ device, renderer.getSwapChainRenderPass() };
+		for (int i = 0; i < uboBuffers.size(); i++) {
+			uboBuffers[i] = std::make_unique<Buffer>(
+				device,
+				sizeof(GlobalUbo),
+				1,
+				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+			uboBuffers[i]->map();
+		}
+
+		auto globalSetLayout = DescriptorSetLayout::Builder(device)
+			.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
+			.build();
+		
+		std::vector<VkDescriptorSet> globalDescriptorSets(SwapChain::MAX_FRAMES_IN_FLIGHT);
+		for (int i = 0; i < globalDescriptorSets.size(); i++) {
+			auto bufferInfo = uboBuffers[i]->descriptorInfo();
+			DescriptorWriter(*globalSetLayout, *globalPool)
+				.writeBuffer(0, &bufferInfo)
+				.build(globalDescriptorSets[i]);
+		}
+
+		SimpleRenderSystem simpleRenderSystem{ 
+			device,
+			renderer.getSwapChainRenderPass(),
+			globalSetLayout->getDescriptorSetLayout()
+		};
         Camera camera{};
 
         auto viewerObject = GameObject::createGameObject();
@@ -70,8 +93,10 @@ namespace rex {
 					frameIndex,
 					frameTime,
 					commandBuffer,
-					camera
+					camera,
+					globalDescriptorSets[frameIndex]
 				};
+
 				// UPDATE
 				// here we will prepare and update objects and memory
 				GlobalUbo ubo{};
