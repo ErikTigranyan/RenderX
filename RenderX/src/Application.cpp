@@ -110,11 +110,15 @@ namespace rex {
 				pointLightSystem.update(frameInfo, ubo);
 				uboBuffers[frameIndex]->writeToBuffer(&ubo); 
 				uboBuffers[frameIndex]->flush();
+
 				// RENDER
 				// here the draw calls will be recorded
 				renderer.beginSwapChainRenderPass(commandBuffer);
+
+				// order here matters
 				simpleRenderSystem.renderGameObjects(frameInfo);
 				pointLightSystem.render(frameInfo);
+
 				renderer.endSwapChainRenderPass(commandBuffer);
 				renderer.endFrame();
 			}
