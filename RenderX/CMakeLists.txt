@@ -5,7 +5,7 @@ if (NOT DEFINED VULKAN_SDK_PATH)
     message(FATAL_ERROR "VULKAN_SDK_PATH is not defined. Make sure the parent CMakeLists.txt is correctly setting this variable.")
 endif()
 
-file(GLOB SOURCES "src/*.cpp" "src/*.h")
+file(GLOB SOURCES "src/*.cpp" "src/*.h" "src/systems/*.cpp" "src/systems/*.h")
 file(GLOB SHADERS "shaders/*.vert" "shaders/*.frag" "shaders/*.glsl")
 
 source_group("Shaders" FILES ${SHADERS})

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Camera.h"
-#include "Device.h"
-#include "GameObject.h"
-#include "Pipeline.h"
-#include "FrameInfo.h"
+#include "../Camera.h"
+#include "../Device.h"
+#include "../GameObject.h"
+#include "../Pipeline.h"
+#include "../FrameInfo.h"
 
 // std
 #include <memory>
