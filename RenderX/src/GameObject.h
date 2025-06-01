@@ -22,6 +22,10 @@ namespace rex {
 		glm::mat3 normalMatrix();
 	};
 
+	struct PointLightComponent {
+		float lightIntensity = 1.0f;
+	};
+
 	class GameObject {
 	public:
 		using id_t = unsigned int;
@@ -32,6 +36,8 @@ namespace rex {
 			return GameObject{ currentId++ };
 		}
 
+		static GameObject makePointLight(float intensity = 10.f, float radius = 0.1f, glm::vec3 color = glm::vec3(1.f));
+
 		GameObject(const GameObject&) = delete;
 		GameObject& operator=(const GameObject&) = delete;
 		GameObject(GameObject&&) = default;
@@ -39,9 +45,12 @@ namespace rex {
 
 		const id_t getId() { return id; }
 
-		std::shared_ptr<Model> model{};
 		glm::vec3 color{};
 		TransformComponent transform{};
+
+		// Optional pointer components
+		std::shared_ptr<Model> model{};
+		std::unique_ptr<PointLightComponent> pointLight = nullptr;
 
 	private:
 		GameObject(id_t objId) : id{ objId } {}
